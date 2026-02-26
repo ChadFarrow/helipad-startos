@@ -39,14 +39,18 @@ x86:
 	ARCH=x86_64 $(MAKE)
 
 docker-images/aarch64.tar: Dockerfile docker_entrypoint.sh
-ifeq ($(ARCH),aarch64)
+ifeq ($(ARCH),x86_64)
+	@mkdir -p docker-images
+	@touch docker-images/aarch64.tar
 else
 	mkdir -p docker-images
 	docker buildx build --tag start9/$(PKG_ID)/main:$(PKG_VERSION) --build-arg ARCH=aarch64 --platform=linux/arm64 -o type=docker,dest=docker-images/aarch64.tar .
 endif
 
 docker-images/x86_64.tar: Dockerfile docker_entrypoint.sh
-ifeq ($(ARCH),x86_64)
+ifeq ($(ARCH),aarch64)
+	@mkdir -p docker-images
+	@touch docker-images/x86_64.tar
 else
 	mkdir -p docker-images
 	docker buildx build --tag start9/$(PKG_ID)/main:$(PKG_VERSION) --build-arg ARCH=x86_64 --platform=linux/amd64 -o type=docker,dest=docker-images/x86_64.tar .
