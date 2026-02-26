@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
   pull_request:
     paths-ignore: ['*.md']
-    branches: ['main', 'master']
+    branches: ['main', 'master', 'custom-tardbox-build']
   push:
     paths-ignore: ['*.md']
-    branches: ['main', 'master']
+    branches: ['main', 'master', 'custom-tardbox-build']
 
 jobs:
   BuildPackage:

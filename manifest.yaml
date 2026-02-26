@@ -1,17 +1,10 @@
 id: helipad
 title: "Helipad"
-version: 0.2.1
+version: 0.2.2
 release-notes: |
-  * Add podcast filter
-  * Add njump links for Nostr references and setting to resolve npubs to names
-  * Add custom reports to settings page
-  * Show hosted wallet info
-  * Add icon for wherever.audio
-  * Format timestamp hover according to current locale
-  * Add ability to trigger webhooks on certain amounts
-  * Add a pew queue to make sure overlapping pews do not get skipped
-  * Fix reply boosts to handle empty wallet key/values and Fountain wallet ids
-  * Fix sound upload caching issues
+  * Add tardbox.com to automatic RSS payment metadata URL regex
+  * Manual "Fetch metadata" button now works with any HTTPS rss::payment URL (no domain whitelist)
+  * BoostBox HEAD request support for Helipad metadata fetching
 license: MIT
 wrapper-repo: "https://github.com/Podcastindex-org/helipad-startos"
 upstream-repo: "https://github.com/Podcastindex-org/helipad"
