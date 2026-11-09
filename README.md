@@ -49,16 +49,16 @@ One upstream image, with its CA store upgraded by the root `Dockerfile`, a tempo
 
 **A oneshot runs as root before the daemon**, and does three things the application cannot do for itself: it takes ownership of the data directory, **copies LND's macaroon onto its own volume**, and installs LND's certificate into the container's trust store.
 
-The copy matters. LND's macaroon is root-owned and mode `0600` on a read-only mount, and Helipad runs unprivileged — so it cannot read the original. A copy with its ownership changed is what makes the credential usable without running the application as root.
+The copy matters. LND's macaroon is root-owned and not world-readable on a read-only mount, and Helipad runs unprivileged — so it cannot read the original. A copy with its ownership changed is what makes the credential usable without running the application as root.
 
 ## Volume and Data Layout
 
 One volume, plus a read-only view of LND's.
 
-| Volume            | Mount Point | Purpose                                                 |
-| ----------------- | ----------- | ------------------------------------------------------- |
-| `main`            | `/data`     | The boostagram database, the store, and a macaroon copy |
-| LND's `main` (ro) | `/mnt/lnd`  | LND's TLS certificate and admin macaroon                |
+| Volume                        | Mount Point | Purpose                                                 |
+| ----------------------------- | ----------- | ------------------------------------------------------- |
+| `main`                        | `/data`     | The boostagram database, the store, and a macaroon copy |
+| LND's `public` (ro), `admin/` | `/mnt/lnd`  | LND's TLS certificate and admin macaroon — nothing else |
 
 | Path             | Written by  | Holds                                                        |
 | ---------------- | ----------- | ------------------------------------------------------------ |
@@ -88,9 +88,9 @@ Everything else — the boostagram history, triggers, display settings — is th
 
 One, and it is required.
 
-| Dependency | Required | Health checks required | Mounted                         | Why                              |
-| ---------- | -------- | ---------------------- | ------------------------------- | -------------------------------- |
-| LND        | Yes      | `lnd`, `sync-progress` | `main`, read-only at `/mnt/lnd` | The node whose payments it reads |
+| Dependency | Required | Health checks required | Mounted                                         | Why                              |
+| ---------- | -------- | ---------------------- | ----------------------------------------------- | -------------------------------- |
+| LND        | Yes      | `lnd`, `sync-progress` | `public` tier `admin/`, read-only at `/mnt/lnd` | The node whose payments it reads |
 
 **This package uses LND's admin macaroon.** Helipad only reads, but the credential it is given is not read-only — anyone with this service's volume has full control of the node.
 
@@ -169,7 +169,7 @@ A restored instance comes back with its history and its password, and re-copies 
 2. **The password cannot be chosen**, only generated — and rotating it restarts the service.
 3. **The service will not start without a password**, without LND, or before LND's wallet has been unlocked once.
 4. **No backfill.** Helipad records boostagrams from when it starts; earlier payments are not imported.
-5. **Mainnet only.** The macaroon path is pinned to Bitcoin mainnet.
+5. **Mainnet only.** LND's `admin/` tier carries the mainnet admin macaroon.
 6. **No configuration surface** beyond the password; everything else is Helipad's own.
 
 ---
@@ -185,7 +185,7 @@ architectures:
 subcontainers:
   - helipad-sub # the setup oneshot and the daemon
 volumes:
-  main: /data # LND's main volume is mounted read-only at /mnt/lnd
+  main: /data # LND's public volume, tier admin/ (admin.macaroon, tls.cert), is mounted read-only at /mnt/lnd
 file_models:
   - store.json # the web login password, in plaintext
 startos_managed_env_vars:
