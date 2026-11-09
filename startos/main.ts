@@ -42,8 +42,8 @@ export const main = sdk.setupMain(async ({ effects }) => {
       })
       .mountDependency<typeof lndManifest>({
         dependencyId: 'lnd',
-        volumeId: 'main',
-        subpath: null,
+        volumeId: 'public',
+        subpath: 'admin',
         mountpoint: '/mnt/lnd',
         readonly: true,
       }),
@@ -57,7 +57,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
         command: [
           'sh',
           '-c',
-          'chown -R helipad:helipad /data && cp /mnt/lnd/data/chain/bitcoin/mainnet/admin.macaroon /data/admin.macaroon && chown helipad:helipad /data/admin.macaroon && cp /mnt/lnd/tls.cert /usr/local/share/ca-certificates/lnd.crt && update-ca-certificates',
+          'chown -R helipad:helipad /data && cp /mnt/lnd/admin.macaroon /data/admin.macaroon && chown helipad:helipad /data/admin.macaroon && cp /mnt/lnd/tls.cert /usr/local/share/ca-certificates/lnd.crt && update-ca-certificates',
         ],
         user: 'root',
       },
