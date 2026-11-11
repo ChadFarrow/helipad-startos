@@ -4,7 +4,9 @@ on:
   workflow_dispatch:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
-    branches: ['master']
+    # community-master: this fork's copy of Start9-Community's master. The
+    # fork's own master is the 2024 package, so sideload builds target this.
+    branches: ['master', 'community-master']
     paths-ignore: ['*.md']
 
 permissions: {}
