@@ -1,16 +1,19 @@
-import { IMPOSSIBLE, VersionInfo } from '@start9labs/start-sdk'
+import { VersionInfo } from '@start9labs/start-sdk'
 
+// A sideload build, not a registry release: 0.2.2:12 with the image moved to
+// Helipad's main branch (2026-11-07, 3e08784a), which reads a fractional
+// value_msat_total (2cdca7d6). The label sits between the registry's 12 and
+// its next release, so that release replaces it as an ordinary update.
 export const current = VersionInfo.of({
-  version: '0.2.2:12',
+  version: '0.2.2:12.1',
   releaseNotes: {
-    en_US: `Requires StartOS 0.4.1 or later. Helipad now reads only the credential it needs from LND, and can no longer read LND's seed or other files. Requires LND 0.21.6-beta:3 or later.`,
-    es_ES: `Requiere StartOS 0.4.1 o posterior. Helipad ahora lee de LND solo la credencial que necesita y ya no puede leer la semilla ni otros archivos de LND. Requiere LND 0.21.6-beta:3 o posterior.`,
-    de_DE: `Erfordert StartOS 0.4.1 oder neuer. Helipad liest von LND nur noch die Zugangsdaten, die es benötigt, und kann den Seed und andere Dateien von LND nicht mehr lesen. Erfordert LND 0.21.6-beta:3 oder neuer.`,
-    pl_PL: `Wymaga StartOS 0.4.1 lub nowszego. Helipad odczytuje teraz z LND tylko potrzebne mu dane uwierzytelniające i nie ma już dostępu do seeda ani innych plików LND. Wymaga LND 0.21.6-beta:3 lub nowszego.`,
-    fr_FR: `Nécessite StartOS 0.4.1 ou ultérieur. Helipad ne lit plus dans LND que l'identifiant dont il a besoin, et ne peut plus lire la seed ni les autres fichiers de LND. Nécessite LND 0.21.6-beta:3 ou ultérieur.`,
+    en_US: `Sideload build. Runs Helipad's main branch from 2026-11-07 (commit 3e08784a) instead of the 0.2.2 release. A boost total that an app sends as a fraction, as Fountain does on each split, is now read instead of shown as 0. Main also includes the new LND and CLN client (LNClient), which no Helipad release has yet. Your data is not changed, so you can go back to 0.2.2:12.`,
   },
   migrations: {
+    // Helipad's main changes no table since 0.2.2 (only the default of the
+    // resolve_nostr_refs setting for a new install), so both ways are no-ops
+    // and going back to 0.2.2:12 keeps every trigger and setting.
     up: async () => {},
-    down: IMPOSSIBLE,
+    down: async () => {},
   },
 })

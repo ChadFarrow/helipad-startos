@@ -37,6 +37,8 @@
 
 One upstream image, with its CA store upgraded by the root `Dockerfile`, a temporary layer that comes out once upstream ships an image built on a fixed store.
 
+**`0.2.2:12.1` is a sideload build, not a registry release.** It pins Helipad's `main` branch — the `latest` tag of 2026-11-07, commit `3e08784a` — by digest in `startos/manifest/index.ts`, for the fractional `value_msat_total` fix (`2cdca7d6`), which no Helipad release has yet. That `main` also carries the LNClient rewrite of the LND connection; it still reads `LND_URL`, `LND_ADMINMACAROON` and `LND_TLSCERT`. No table changes since 0.2.2, so its migration is a no-op both ways and `0.2.2:12` can be installed again over it.
+
 | Property      | Value                                                      |
 | ------------- | ---------------------------------------------------------- |
 | Image         | `podcastindexorg/podcasting20-helipad` + root `Dockerfile` |
